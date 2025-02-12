@@ -31,7 +31,7 @@ Create a `.env` file in the root of the project to store your API keys and confi
 ```bash
 OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=your_openrouter_model
-PORT=6002
+PORT=6009
 ```
 
 Replace `your_openrouter_api_key` with your actual OpenRouter API key.
