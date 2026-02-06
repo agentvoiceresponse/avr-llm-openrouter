@@ -1,8 +1,8 @@
 {
   "name": "avr-llm-openrouter",
-  "version": "1.0.1",
-  "author": "Giuseppe Careri",
-  "description": "",
+  "version": "1.1.0",
+  "author": "Agent Voice Response <info@agentvoiceresponse.com>",
+  "description": "OpenRouter LLM service for Agent Voice Response",
   "main": "index.js",
   "scripts": {
     "start": "node .",
@@ -11,11 +11,19 @@
     "dc:push": "docker push agentvoiceresponse/avr-llm-openrouter:latest && docker push agentvoiceresponse/avr-llm-openrouter:${npm_package_version}"
   },
   "dependencies": {
-    "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0"
+    "@openrouter/sdk": "^0.8.0",
+    "axios": "^1.13.4",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
-  }
+    "nodemon": "^3.1.11"
+  },
+  "contributors": [
+    {
+      "name": "Giuseppe Careri",
+      "email": "info@gcareri.com",
+      "url": "https://github.com/gcareri"
+    }
+  ]
 }

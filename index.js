@@ -5,7 +5,7 @@
  * @see https://www.gcareri.com
  */
 const express = require('express');
-const axios = require('axios');
+const { OpenRouter } = require('@openrouter/sdk');
 
 require('dotenv').config();
 
@@ -35,60 +35,104 @@ const handlePromptStream = async (req, res) => {
     res.setHeader('Connection', 'keep-alive');
 
     try {
-        const openrouterBaseUrl = process.env.OPENROUTER_BASEURL || 'https://openrouter.ai/api';
-        const requestConfig = {
-            method: 'post',
-            url: `${openrouterBaseUrl}/v1/chat/completions`,
-            headers: {
-                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            data: {
-                model: process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-lite-preview-02-05:free',
-                messages: messages,
-                stream: true,
-            },
-            responseType: 'stream',
+
+        const openrouter = new OpenRouter({
+            apiKey: process.env.OPENROUTER_API_KEY,
+        });
+
+        const input = {
+            model: process.env.OPENROUTER_MODEL || 'openrouter/free',
+            input: messages,
+            // tools: TODO: Add tools
         };
 
-        console.log("OpenRouter Configuration", requestConfig)
-        console.log("Messages", messages);
+        console.log("Input", input)
 
-        const response = await axios(requestConfig);
+        const result = openrouter.callModel(input);
 
-        response.data.on('data', (chunk) => {
-            const lines = chunk.toString().split('\n').filter(line => line.trim() !== '');
-            for (const line of lines) {
-                if (line.startsWith('data: ')) {
-                    const data = line.replace('data: ', '');
-                    if (data === '[DONE]') {
-                        res.end();
-                        return;
-                    }
-                    try {
-                        const parsed = JSON.parse(data);
-                        const content = parsed.choices[0]?.delta?.content || '';
-                        if (content) {
-                            console.log('Sending chunk to client:', content);
-                            res.write(JSON.stringify({ type: 'text', content }));
-                        }
-                    } catch (error) {
-                        console.log(data);
-                        console.error('Error parsing OpenRouter response:', error);
-                    }
+        for await (const event of result.getFullResponsesStream()) {
+            switch (event.type) {
+              case 'response.output_text.delta':
+                console.log("Message delta", event.delta);
+                res.write(JSON.stringify({ type: 'text', content: event.delta }));
+                break;
+              case 'response.function_call_arguments.delta':
+                console.log('Tool argument delta:', event.delta);
+                break;
+              case 'response.completed':
+                console.log('Response complete');
+                break;
+              case 'tool.preliminary_result':
+                // Intermediate progress from generator tools
+                console.log('Progress:', event.result);
+                break;
+              case 'tool.result':
+                // Final result when tool execution completes
+                console.log('Tool completed:', event.toolCallId);
+                console.log('Result:', event.result);
+                // Access any preliminary results that were emitted
+                if (event.preliminaryResults) {
+                  console.log('Preliminary results:', event.preliminaryResults);
                 }
+                break;
             }
-        });
+          }
+          
+          res.end();
 
-        response.data.on('end', () => {
-            console.log('Streaming complete');
-            res.end();
-        });
+        // const requestConfig = {
+        //     method: 'post',
+        //     url: `${openrouterBaseUrl}/v1/chat/completions`,
+        //     headers: {
+        //         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        //         'Content-Type': 'application/json',
+        //     },
+        //     data: {
+        //         model: process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-lite-preview-02-05:free',
+        //         messages: messages,
+        //         stream: true,
+        //     },
+        //     responseType: 'stream',
+        // };
 
-        response.data.on('error', (err) => {
-            console.error('Error during OpenRouter streaming:', err);
-            res.status(500).send('Error during OpenRouter streaming');
-        });
+        // console.log("OpenRouter Configuration", requestConfig)
+        // console.log("Messages", messages);
+
+        // const response = await axios(requestConfig);
+
+        // response.data.on('data', (chunk) => {
+        //     const lines = chunk.toString().split('\n').filter(line => line.trim() !== '');
+        //     for (const line of lines) {
+        //         if (line.startsWith('data: ')) {
+        //             const data = line.replace('data: ', '');
+        //             if (data === '[DONE]') {
+        //                 res.end();
+        //                 return;
+        //             }
+        //             try {
+        //                 const parsed = JSON.parse(data);
+        //                 const content = parsed.choices[0]?.delta?.content || '';
+        //                 if (content) {
+        //                     console.log('Sending chunk to client:', content);
+        //                     res.write(JSON.stringify({ type: 'text', content }));
+        //                 }
+        //             } catch (error) {
+        //                 console.log(data);
+        //                 console.error('Error parsing OpenRouter response:', error);
+        //             }
+        //         }
+        //     }
+        // });
+
+        // response.data.on('end', () => {
+        //     console.log('Streaming complete');
+        //     res.end();
+        // });
+
+        // response.data.on('error', (err) => {
+        //     console.error('Error during OpenRouter streaming:', err);
+        //     res.status(500).send('Error during OpenRouter streaming');
+        // });
     } catch (error) {
         console.error('Error calling OpenRouter API:', error.message);
         res.status(500).json({ message: 'Error communicating with OpenRouter' });

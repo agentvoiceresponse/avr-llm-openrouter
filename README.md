@@ -1,5 +1,10 @@
 # Agent Voice Response - OpenRouter Integration
 
+[![Discord](https://img.shields.io/discord/1347239846632226998?label=Discord&logo=discord)](https://discord.gg/DFTU69Hg74)
+[![GitHub Repo stars](https://img.shields.io/github/stars/agentvoiceresponse/avr-llm-openrouter?style=social)](https://github.com/agentvoiceresponse/avr-llm-openrouter)
+[![Docker Pulls](https://img.shields.io/docker/pulls/agentvoiceresponse/avr-llm-openrouter?label=Docker%20Pulls&logo=docker)](https://hub.docker.com/r/agentvoiceresponse/avr-llm-openrouter)
+[![Ko-fi](https://img.shields.io/badge/Support%20us%20on-Ko--fi-ff5e5b.svg)](https://ko-fi.com/agentvoiceresponse)
+
 This repository showcases the integration between **Agent Voice Response** and **OpenRouter**. The application leverages OpenRouter's powerful language model to process text input from users, providing intelligent, context-aware responses that enhance the virtual agent's capabilities.
 
 ## Prerequisites
@@ -91,3 +96,23 @@ To use this application, you need to obtain an API key from OpenRouter and selec
 3. Select the model you want to use from: [OpenRouter Models](https://openrouter.ai/models)
 
 Replace `your_openrouter_api_key` and `your_openrouter_model` in the `.env` file with the values you obtained from OpenRouter.
+
+## Support & Community
+
+*   **GitHub:** [https://github.com/agentvoiceresponse](https://github.com/agentvoiceresponse) - Report issues, contribute code.
+*   **Discord:** [https://discord.gg/DFTU69Hg74](https://discord.gg/DFTU69Hg74) - Join the community discussion.
+*   **Docker Hub:** [https://hub.docker.com/u/agentvoiceresponse](https://hub.docker.com/u/agentvoiceresponse) - Find Docker images.
+*   **NPM:** [https://www.npmjs.com/~agentvoiceresponse](https://www.npmjs.com/~agentvoiceresponse) - Browse our packages.
+*   **Wiki:** [https://wiki.agentvoiceresponse.com/en/home](https://wiki.agentvoiceresponse.com/en/home) - Project documentation and guides.
+
+## Support AVR
+
+AVR is free and open-source.
+Any support is entirely voluntary and intended as a personal gesture of appreciation.
+Donations do not provide access to features, services, or special benefits, and the project remains fully available regardless of donations.
+
+<a href="https://ko-fi.com/agentvoiceresponse" target="_blank"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support us on Ko-fi"></a>
+
+## License
+
+MIT License - see the [LICENSE](LICENSE.md) file for details.
